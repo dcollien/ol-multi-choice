@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multiple Choice Quiz</title>
+
+        <!-- Standard Styles -->
+        <link rel="stylesheet" href="/libs/bootstrap3/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/libs/bootstrap-material-design/css/material.min.css">
+        <link rel="stylesheet" type="text/css" href="/libs/bootstrap-material-design/css/ripples.min.css">
+        <link rel="stylesheet" type="text/css" href="/openlearning.css">
+
+        <style>
+         body {
+            background-color: white;
+         }
+
+         .content, .completed {
+            display: inline-block;
+         }
+
+         .content {
+            text-align: left;
+            margin-top: 8px;
+         }
+
+         .saving {
+            color: #ddd;
+         }
+
+         .item-text {
+            display: inline;
+         }
+
+         .progress {
+            display: inline-block;
+            width: 80%;
+         }
+
+         .correct {
+            color: #009688;
+         }
+        </style>
+    </head>
+    <body>
+        <div>
+            <div class="content" id="content">
+            </div>
+            <div></div>
+            <div class="correct correct-message"></div>
+            <div class="incorrect incorrect-message"></div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+        <script src="/openlearning.js"></script>
+        <script src="/libs/bootstrap-material-design/js/material.min.js"></script>
+        <script src="/libs/bootstrap-material-design/js/ripples.min.js"></script>
+        <script src="display.js"></script>
+    </body>
+</html>

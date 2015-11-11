@@ -1,0 +1,37 @@
+{
+    "name": "Checklist",
+    "author": ["David Collien"],
+    "email": "david@openlearning.com",
+    "license": "MIT",
+    "version": "0.0.1",
+    "description": "Single-selection radio-button and multiple-selection check-box answers.",
+    "category": "Quiz",
+
+    "setup": {
+        "answers": [{"id": "1", "text": "Answer 1 (Correct)"}, {"id": "2", "text": "Answer 2 (Incorrect)"}],
+        "type": "single",
+        "correctMessage": "Correct!",
+        "incorrectMessage": "Incorrect! Try again."
+    },
+
+    "display": {
+        "main": "display.html",
+        "setup": "setup.html"
+    },
+
+    "completion": {
+        "settings": ["interaction", "progress", "custom"],
+        "progress": "keys",
+        "default": "custom",
+        "customText": "Completed when everything has been checked off",
+        "criteria": {
+            "1": true,
+            "2": false
+        },
+        "comparison": "equal"
+    },
+
+    "collaboration": false,
+
+    "sharing": false
+}

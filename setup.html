@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multiple Choice Quiz</title>
+
+        <!-- Standard Styles -->
+        <link rel="stylesheet" href="/libs/bootstrap3/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/libs/bootstrap-material-design/css/material.min.css">
+        <link rel="stylesheet" type="text/css" href="/libs/bootstrap-material-design/css/ripples.min.css">
+        <link rel="stylesheet" type="text/css" href="/openlearning.css">
+
+        <style>
+         body {
+            background-color: white;
+         }
+
+         .content, .wrapper {
+            display: inline-block;
+         }
+
+         .wrapper {
+            width: 80%;
+         }
+
+         .content {
+            text-align: left;
+            margin-top: 8px;
+         }
+         
+         .saving {
+            color: #ddd;
+         }
+
+         .item-text {
+            display: inline;
+         }
+
+         .progress {
+            display: inline-block;
+            width: 80%;
+         }
+
+         .correct {
+            color: #009688;
+         }
+
+         .correct-message {
+            margin-bottom: 24px;
+         }
+
+
+         .btn-remove {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            float: right;
+            position: absolute;
+         }
+
+         .radio label span {
+            top: 10px;
+         }
+
+         .btn-add {
+            font-size: 24px;
+            line-height: 16px;
+            padding-bottom: 12px;
+         }
+
+         .add-text {
+            font-size: 12px;
+         }
+
+         .answer-wrapper {
+            margin-top: 16px;
+            margin-bottom: 16px;
+         }
+
+        </style>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <div class="wrapper">
+                <div style="text-align: left;">
+                    <h3>Quiz Setup</h3>
+                    <hr>
+                    <div class="form-control-wrapper" style="display: inline-block;">
+                        <select class="form-control">
+                            <option id="single-type">Single Selection</option>
+                            <option id="multiple-type">Multiple Selection</option>
+                        </select>
+                        <div class="floating-label">Type of selection</div>
+                        <span class="material-input"></span>
+                    </div>
+                </div>
+
+
+                <div class="form-control-wrapper answer-wrapper">
+                    <div class="content" id="content">
+                    </div>
+                    <div></div>
+                    <button class="btn btn-primary btn-flat btn-add">+ <span class="add-text">Add</span></button>
+
+                    <div class="floating-label">Answers</div>
+                </div>
+
+                <div></div>
+                <div class="correct correct-message form-control-wrapper">
+                    <input id="correct-message-input" type="text" class="form-control">
+                    <div class="floating-label">Message displayed when correct</div>
+                    <span class="material-input"></span>
+                </div>
+                <div class="form-group has-error">
+                    <div class="incorrect incorrect-message form-control-wrapper">
+                        <input id="incorrect-message-input" type="text" class="form-control form-control-success">
+                        <div class="floating-label">Message displayed when incorrect</div>
+                        <span class="material-input"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+        <script src="/openlearning.js"></script>
+        <script src="/libs/bootstrap-material-design/js/material.min.js"></script>
+        <script src="/libs/bootstrap-material-design/js/ripples.min.js"></script>
+        <script src="setup.js"></script>
+    </body>
+</html>
