@@ -5,6 +5,7 @@
     "license": "MIT",
     "version": "0.0.1",
     "description": "Single-selection radio-button and multiple-selection check-box answers.",
+    "categories": ["quiz", "multiple choice"],
     "category": "Quiz",
 
     "setup": {
@@ -29,9 +30,5 @@
             "2": false
         },
         "comparison": "equal"
-    },
-
-    "collaboration": false,
-
-    "sharing": false
+    }
 }
