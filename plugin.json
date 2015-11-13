@@ -6,7 +6,6 @@
     "version": "0.0.1",
     "description": "Single-selection radio-button and multiple-selection check-box answers.",
     "categories": ["quiz", "multiple choice"],
-    "category": "Quiz",
 
     "setup": {
         "answers": [{"id": "1", "text": "Answer 1 (Correct)"}, {"id": "2", "text": "Answer 2 (Incorrect)"}],
@@ -30,5 +29,10 @@
             "2": false
         },
         "comparison": "equal"
+    },
+    
+    "icon": {
+        "image": "User Interface/Double-Check",
+        "color": "#5abeb5"
     }
 }
