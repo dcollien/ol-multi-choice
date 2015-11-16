@@ -84,6 +84,14 @@ var removeStatus = function(status) {
     $('.showStatus').removeClass(status);
 };
 
+var updateAnswer = function(id, text) {
+    answers.forEach(function(answer) {
+        if (answer.id === id) {
+            answer.text = text;
+        }
+    });
+};
+
 // helpers
 var buildAnswers = function($container) {
     var itemStyle, itemName;
@@ -120,18 +128,42 @@ var buildAnswers = function($container) {
                 })
             ;
 
-            var $input = 
-                $('<input>', {
+            var $checkbox = $('<input>', {
                     'type': itemStyle,
                     'class': 'answer-item',
                     'name': itemName,
                     'value': item.id
                 })
+                .data('item-id', item.id)
                 .prop('checked', Boolean(correctSelection[item.id]))
+                .on('click', function() {
+                    // update the correct selection data from the selected items
+                    $('.answer-item').each(function(i, elt) {
+                        var $item = $(elt);
+                        correctSelection[$item.val()] = $item.prop('checked');
+                    });
+
+                    // save the data
+                    addStatus('saving');
+                    saveCriteria(function() {
+                        removeStatus('saving');
+                    });
+                })
+            ;
+
+            var $input = $('<input>', 
+                    {'class': 'item-text form-control'}
+                )
+                .data('item-id', item.id)
+                .val(item.text)
                 .on('keyup', _.debounce(function() {
+                    var $this = $(this);
+                    updateAnswer($this.data('item-id'), $this.val());
                     saveAnswers();
                 }, 500))
                 .on('blur change', function() {
+                    var $this = $(this);
+                    updateAnswer($this.data('item-id'), $this.val());
                     saveAnswers();
                 })
             ;
@@ -139,7 +171,7 @@ var buildAnswers = function($container) {
             // build the label and input element for the answer
             var $label = $('<label>')
                 .append(
-                    $input
+                    $checkbox
                 )
             ;
 
@@ -165,8 +197,7 @@ var buildAnswers = function($container) {
             // add the answer text to this item
             $label
                 .append(
-                    $('<input>', {'class': 'item-text form-control'})
-                        .val(item.text)
+                    $input
                 )
             ;
 
@@ -181,19 +212,6 @@ var buildAnswers = function($container) {
             ;
 
             $container.append($item);
-            $item.find('input').on('click', function() {
-                // update the correct selection data from the selected items
-                $('.answer-item').each(function(i, elt) {
-                    var $item = $(elt);
-                    correctSelection[$item.val()] = $item.prop('checked');
-                });
-
-                // save the data
-                addStatus('saving');
-                saveCriteria(function() {
-                    removeStatus('saving');
-                });
-            });
         });
     }
 };
