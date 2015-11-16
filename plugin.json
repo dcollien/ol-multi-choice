@@ -23,7 +23,7 @@
         "settings": ["interaction", "progress", "custom"],
         "progress": "keys",
         "default": "custom",
-        "customText": "Completed when everything has been checked off",
+        "customText": "Completed when the answers match",
         "criteria": {
             "1": true,
             "2": false
