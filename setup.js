@@ -212,5 +212,9 @@ OL(function() {
     $('#add-button').on('click', function() {
         addAnswer('', false);
         buildAnswers($container);
+        addStatus('saving');
+        saveAnswers(function() {
+            removeStatus('saving');
+        });
     });
 });
