@@ -110,6 +110,7 @@ var buildAnswers = function($container) {
                 .data('item-id', item.id)
                 .click(function() {
                     deleteAnswer($(this).data('item-id'));
+                    buildAnswers($container);
                     addStatus('saving');
                     saveAnswers(function() {
                         removeStatus('saving');
