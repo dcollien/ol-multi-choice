@@ -19,7 +19,22 @@ var answers, type, correctSelection;
 
 
 var deleteAnswer = function(answerID) {
+    var deleteIndex = null;
+    var i = 0;
+    while (i < answers.length) {
+        if (answers[i].id === answerID) {
+            answers.splice(i, 1);
+            break;
+        }
+        ++i;
+    }
+    delete correctSelection[answerID];
+};
 
+var addAnswer = function(answerText, isCorrect) {
+    var answerID = OL.uuid();
+    answers.push({'id': answerID, 'text': answerText});
+    correctSelection[answerID] = Boolean(isCorrect);
 };
 
 var saveAnswers = function(callback) {
@@ -56,6 +71,14 @@ var save = function(callback) {
     });
 };
 
+var addStatus = function(status) {
+    $('.showStatus').addClass(status);
+};
+
+var removeStatus = function(status) {
+    $('.showStatus').removeClass(status);
+};
+
 // helpers
 var buildAnswers = function($container) {
     var itemStyle, itemName;
@@ -87,6 +110,10 @@ var buildAnswers = function($container) {
                 .data('item-id', item.id)
                 .click(function() {
                     deleteAnswer($(this).data('item-id'));
+                    addStatus('saving');
+                    saveAnswers(function() {
+                        removeStatus('saving');
+                    });
                 })
             ;
 
@@ -123,9 +150,15 @@ var buildAnswers = function($container) {
 
             // add the answer text to this item
             $label
-                .append($('<input>', {'class': 'item-text form-control'}).val(item.text))
-                .append($remove)
+                .append(
+                    $('<input>', {'class': 'item-text form-control'})
+                        .val(item.text)
+                )
             ;
+
+            if (answers.length !== 0) {
+                $label.append($remove);
+            }
 
             var $item = $('<div>')
                 .addClass(itemStyle)
@@ -142,9 +175,9 @@ var buildAnswers = function($container) {
                 });
 
                 // save the data
-                $status.addClass('saving');
+                addStatus('saving');
                 saveCriteria(function() {
-                    $status.removeClass('saving');
+                    removeStatus('saving');
                 });
             });
         });
