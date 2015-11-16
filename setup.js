@@ -201,7 +201,7 @@ var buildAnswers = function($container) {
                 )
             ;
 
-            if (answers.length !== 0) {
+            if (answers.length > 1) {
                 $label.append($remove);
             }
 
