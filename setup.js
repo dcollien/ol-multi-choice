@@ -38,13 +38,18 @@ var addAnswer = function(answerText, isCorrect) {
 };
 
 var saveAnswers = function(callback) {
+    addStatus('saving');
     OL.setup.replace({
         'answers': answers,
         'type': type
     }, function(result) {
         answers = result.data.answers;
         type    = result.data.type;
-        callback();
+        removeStatus('saving');
+
+        if (callback) {
+            callback();
+        }
     });
 };
 
@@ -111,22 +116,30 @@ var buildAnswers = function($container) {
                 .click(function() {
                     deleteAnswer($(this).data('item-id'));
                     buildAnswers($container);
-                    addStatus('saving');
-                    saveAnswers(function() {
-                        removeStatus('saving');
-                    });
+                    saveAnswers();
+                })
+            ;
+
+            var $input = 
+                $('<input>', {
+                    'type': itemStyle,
+                    'class': 'answer-item',
+                    'name': itemName,
+                    'value': item.id
+                })
+                .prop('checked', Boolean(correctSelection[item.id]))
+                .on('keyup', _.debounce(function() {
+                    saveAnswers();
+                }, 500))
+                .on('blur change', function() {
+                    saveAnswers();
                 })
             ;
 
             // build the label and input element for the answer
             var $label = $('<label>')
                 .append(
-                    $('<input>', {
-                        'type': itemStyle,
-                        'class': 'answer-item',
-                        'name': itemName,
-                        'value': item.id
-                    }).prop('checked', Boolean(correctSelection[item.id]))
+                    $input
                 )
             ;
 
@@ -207,14 +220,11 @@ OL(function() {
         correctSelection = result.data || DEFAULT_CORRECT_SELECTION;
         // build the answers as HTML elements
         buildAnswers($container);
-    });
 
-    $('#add-button').on('click', function() {
-        addAnswer('', false);
-        buildAnswers($container);
-        addStatus('saving');
-        saveAnswers(function() {
-            removeStatus('saving');
+        $('#add-button').on('click', function() {
+            addAnswer('', false);
+            buildAnswers($container);
+            saveAnswers();
         });
     });
 });
