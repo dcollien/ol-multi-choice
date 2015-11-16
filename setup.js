@@ -207,4 +207,9 @@ OL(function() {
         // build the answers as HTML elements
         buildAnswers($container);
     });
+
+    $('#add-button').on('click', function() {
+        addAnswer('', false);
+        buildAnswers($container);
+    });
 });
