@@ -1,5 +1,5 @@
 /**
- * Builds a Quiz Answer Setup (authoring tool) (for display on setup.html)
+ * Builds a Quiz Answer Setup (authoring tool, for display on setup.html)
  * loads and saves answers from/to OpenLearning setup data, and sets up
  * criteria for checking off against the correct selection.
  */
@@ -205,14 +205,18 @@ var buildAnswers = function($container) {
 
     if (type === 'single' || type === 'multiple') {
         // build the answers
-
         itemName = 'answer';
 
+        // for each answer, build its UI:
+        //  * checkbox/radio button
+        //  * text input
+        //  * remove button
         $.each(answers, function(i, item) {
             if (type === 'multiple') {
                 itemName = item.id;
             }
 
+            // remove button
             var $remove = $('<button>', {'class': 'btn btn-default btn-flat btn-remove'})
                 .html('&times;')
                 .data('item-id', item.id)
@@ -223,6 +227,7 @@ var buildAnswers = function($container) {
                 })
             ;
 
+            // checkbox/radio button
             var $checkbox = $('<input>', {
                     'type': itemStyle,
                     'class': 'answer-item',
@@ -242,6 +247,7 @@ var buildAnswers = function($container) {
                 })
             ;
 
+            // text input
             var $input = $('<input>', 
                     {'class': 'item-text form-control'}
                 )
@@ -286,16 +292,14 @@ var buildAnswers = function($container) {
             }
 
             // add the answer text to this item
-            $label
-                .append(
-                    $input
-                )
-            ;
+            $label.append($input);
 
+            // add remove buttons (if there's more than 1 left)
             if (answers.length > 1) {
                 $label.append($remove);
             }
 
+            // insert them all into the item
             var $item = $('<div>')
                 .addClass(itemStyle)
                 .addClass(itemStyle + '-primary')
