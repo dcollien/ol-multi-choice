@@ -25,6 +25,8 @@ var submitQuizHandler = function(callback) {
         state[$item.val()] = $item.prop('checked');
     });
 
+    console.log(state);
+
     /* Update the user's saved state data: */
 
     // change the status element to have a "saving" look
@@ -47,6 +49,8 @@ var submitQuizHandler = function(callback) {
         $('.correct').toggle(result.success);
         $('.incorrect').toggle(!result.success);
 
+        console.log(result);
+
         // tell OpenLearning to replace the "selected" data for the user 
         // with the current state, and if it was correct
         OL.user.replace({'selected': state, 'isCorrect': result.success}, function() {
@@ -67,7 +71,7 @@ var submitQuizHandler = function(callback) {
 /**
  * Randomly shuffles an array (in-place)
  * 
- * @param  {array} array The array to shuffle.
+ * @param  {array} array - The array to shuffle.
  */
 var shuffle = function(array) {
     var selected, temp;
@@ -86,9 +90,9 @@ var shuffle = function(array) {
  * Builds the DOM elements for the quiz answers, adds event handlers,
  * and inserts them into the given container
  * 
- * @param  {jQuery} $container The jQuery-wrapped DOM element containing the answers
- * @param  {string} type Either "single" or "multiple", depending on whether multiple selection (checkboxes) is required
- * @param  {array} answers An array of answer objects (with "id" and "text" properties) to display
+ * @param  {jQuery} $container - The jQuery-wrapped DOM element containing the answers
+ * @param  {string} type Either - "single" or "multiple", depending on whether multiple selection (checkboxes) is required
+ * @param  {array} answers - An array of answer objects (with "id" and "text" properties) to display
  */
 var buildAnswers = function($container, type, answers) {
     var itemStyle, itemName;

@@ -14,9 +14,17 @@ var DEFAULT_CORRECT_SELECTION = {'1': true, '2': false};
       * the quiz answers
       * the type of quiz (single or multiple selection)
       * the correct selection of quiz answers (mapping answer IDs to booleans)
+      * the values of customisable text
 */
-var answers, type, correctSelection;
+var answers, type, correctSelection, textValues;
 
+
+/**
+ * Delete an answer from the answer list
+ * 
+ * @param  {string} answerID - ID of the answer to delete from the answers list
+ * 
+ */
 var deleteAnswer = function(answerID) {
     var deleteIndex = null;
     var i = 0;
@@ -30,6 +38,10 @@ var deleteAnswer = function(answerID) {
     delete correctSelection[answerID];
 };
 
+/**
+ * Remove any answers from the comparison criteria
+ * which are not in the answers list
+ */
 var removeMissingAnswersFromCriteria = function() {
     // Just as a precaution, delete any items
     // from correctSelection which are not in answers
@@ -39,7 +51,7 @@ var removeMissingAnswersFromCriteria = function() {
     var i;
 
     for (i = 0; i < answers.length; ++i) {
-        answerObject[answers[i]] = answers[i];
+        answerObject[answers[i].id] = answers[i].id;
     }
     for (id in correctSelection) {
         if (!answerObject.hasOwnProperty(id)) {
@@ -52,28 +64,56 @@ var removeMissingAnswersFromCriteria = function() {
     }
 };
 
+/**
+ * Add an answer to the answers list
+ * 
+ * @param {string} answerText - The text for the new answer
+ * @param {Boolean} isCorrect - Whether the answer is a correct selection
+ * 
+ */
 var addAnswer = function(answerText, isCorrect) {
     var answerID = OL.uuid();
     answers.push({'id': answerID, 'text': answerText});
     correctSelection[answerID] = Boolean(isCorrect);
 };
 
-var saveAnswers = function(callback) {
+/**
+ * Save the setup state
+ * 
+ * @param  {Function} callback - Called when the state is saved
+ */
+var saveState = function(callback) {
     addStatus('saving');
     OL.setup.replace({
         'answers': answers,
-        'type': type
+        'type': type,
+        'incorrectMessage': textValues.incorrectMessage,
+        'correctMessage': textValues.correctMessage
     }, function(result) {
         answers = result.data.answers;
         type    = result.data.type;
         removeStatus('saving');
 
-        if (callback) {
+        if (typeof callback === 'function') {
             callback();
         }
     });
 };
 
+/**
+ * Update the textValues state from the UI inputs
+ */
+var updateTextState = function() {
+    textValues.incorrectMessage = $('#incorrect-message-input').val();
+    textValues.correctMessage = $('#correct-message-input').val();
+};
+
+/**
+ * Save the comparison criteria 
+ * (secret data storing which answers are correct)
+ * 
+ * @param  {Function} callback - Called when the criteria is saved
+ */
 var saveCriteria = function(callback) {
     removeMissingAnswersFromCriteria();
     OL.criteria.replace(correctSelection, function() {
@@ -81,31 +121,50 @@ var saveCriteria = function(callback) {
     });
 };
 
+/**
+ * Save everything.
+ * 
+ * @param  {Function} callback - Called back when save is completed
+ */
 var save = function(callback) {
     var calls = 0;
+    var checkDone = function() {
+        (--calls === 0) && callback();
+    };
 
-    // save answers and criteria in parallel
-    // and fire the callback when they're both done (in any order)
+    updateTextState();
+
+    // save state and criteria in parallel
+    // and fire the callback when they're all done (in any order)
 
     calls++;
-    saveAnswers(function() {
-        (--calls === 0) && callback();
-    });
+    saveState(checkDone);
 
     calls++;
-    saveCriteria(function() {
-        (--calls === 0) && callback();
-    });
+    saveCriteria(checkDone);
 };
 
+/**
+ * Add a class to any element with a "status" class
+ * @param {string} status - The class to add
+ */
 var addStatus = function(status) {
-    $('.showStatus').addClass(status);
+    $('.status').addClass(status);
 };
 
+/**
+ * Remove a class from any element with a "status" class
+ * @param  {string} - The class to remove
+ */
 var removeStatus = function(status) {
-    $('.showStatus').removeClass(status);
+    $('.status').removeClass(status);
 };
 
+/**
+ * Replaces the text for a particular answer
+ * @param  {string} id - The answer ID in the answers list
+ * @param  {string} text - The text value to replace
+ */
 var updateAnswer = function(id, text) {
     answers.forEach(function(answer) {
         if (answer.id === id) {
@@ -114,7 +173,10 @@ var updateAnswer = function(id, text) {
     });
 };
 
-// helpers
+/**
+ * Re-builds the quiz answers setup UI
+ * @param  {jQuery} $container - Element to build the quiz inside
+ */
 var buildAnswers = function($container) {
     var itemStyle, itemName;
 
@@ -181,12 +243,12 @@ var buildAnswers = function($container) {
                 .on('keyup', _.debounce(function() {
                     var $this = $(this);
                     updateAnswer($this.data('item-id'), $this.val());
-                    saveAnswers();
+                    saveState();
                 }, 500))
                 .on('blur change', function() {
                     var $this = $(this);
                     updateAnswer($this.data('item-id'), $this.val());
-                    saveAnswers();
+                    saveState();
                 })
             ;
 
@@ -252,12 +314,34 @@ OL(function() {
     type    = OL.setup.data.type    || DEFAULT_ANSWER_TYPE;
 
     // set the correct/incorrect text to that specified in the setup data
-    $('#correct-message-input'  ).val(OL.setup.data.correctMessage   || '');
-    $('#incorrect-message-input').val(OL.setup.data.incorrectMessage || '');
+    textValues = {
+        "correctMessage": OL.setup.data.correctMessage || "",
+        "incorrectMessage": OL.setup.data.incorrectMessage || ""
+    };
+    // Save the messages (debounced) on change
+    $('#correct-message-input')
+        .val(textValues.correctMessage)
+        .on('change keyup', _.debounce(function() {
+            updateTextState();
+            saveState();
+        }, 500))
+    ;
+    $('#incorrect-message-input')
+        .val(textValues.incorrectMessage)
+        .on('change keyup', _.debounce(function() {
+            updateTextState();
+            saveState();
+        }, 500))
+    ;
+
+    $('#selection-type-input').on('click change', function() {
+        type = $(this).val();
+        buildAnswers($container);
+        saveState();
+    });
 
     // load the correct selection (criteria data)
     OL.criteria.retrieve(function(result) {
-        OL.log(result);
         correctSelection = result.criteria || DEFAULT_CORRECT_SELECTION;
         // build the answers as HTML elements
         buildAnswers($container);
@@ -265,7 +349,10 @@ OL(function() {
         $('#add-button').on('click', function() {
             addAnswer('', false);
             buildAnswers($container);
-            saveAnswers();
+            saveState();
         });
     });
+
+    // If told to save, call the save function
+    OL.on('save', save);
 });
