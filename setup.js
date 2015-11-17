@@ -174,6 +174,17 @@ var updateAnswer = function(id, text) {
 };
 
 /**
+ * Updates the criteria from the current selection
+ */
+var updateCriteria = function() {
+    // update the correct selection data from the selected items
+    $('.answer-item').each(function(i, elt) {
+        var $item = $(elt);
+        correctSelection[$item.val()] = $item.prop('checked');
+    });
+};
+
+/**
  * Re-builds the quiz answers setup UI
  * @param  {jQuery} $container - Element to build the quiz inside
  */
@@ -221,11 +232,7 @@ var buildAnswers = function($container) {
                 .data('item-id', item.id)
                 .prop('checked', Boolean(correctSelection[item.id]))
                 .on('click', function() {
-                    // update the correct selection data from the selected items
-                    $('.answer-item').each(function(i, elt) {
-                        var $item = $(elt);
-                        correctSelection[$item.val()] = $item.prop('checked');
-                    });
+                    updateCriteria();
 
                     // save the data
                     addStatus('saving');
@@ -337,7 +344,8 @@ OL(function() {
     $('#selection-type-input').on('click change', function() {
         type = $(this).val();
         buildAnswers($container);
-        saveState();
+        updateCriteria();
+        save();
     });
 
     // load the correct selection (criteria data)
