@@ -12,11 +12,11 @@ var DEFAULT_ANSWER_TYPE = 'single'; // 'single' or 'multiple'
 var state;
 
 /**
- * Handles a click on an answer item to trigger
+ * Handles the submission of the quiz to trigger
  * the saving and checking of the state.
  */
-var itemClickHandler = function() {
-    var $status = $('#status');
+var submitQuizHandler = function(callback) {
+    var $status = $('.status');
 
     /* Update the state data object from the UI state */
     $('.answer-item').each(function(i, elt) {
@@ -53,6 +53,9 @@ var itemClickHandler = function() {
             // it's done all saving operations, so remove the 
             // "saving" look of the status element
             $status.removeClass('saving');
+            if (callback) {
+                callback();
+            }
         });
     });
     
@@ -153,7 +156,6 @@ var buildAnswers = function($container, type, answers) {
             ;
 
             $container.append($item);
-            $item.find('input').on('click', itemClickHandler);
         });
     }
 };
@@ -199,4 +201,12 @@ OL(function() {
     
     // build the answers as HTML elements
     buildAnswers($container, type, answers);
+
+    $('#check-answer-btn').on('click', function() {
+        var $this = $(this);
+        $this.prop('disabled', true);
+        submitQuizHandler(function() {
+            $this.prop('disabled', false);
+        });
+    });
 });

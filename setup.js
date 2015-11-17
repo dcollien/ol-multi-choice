@@ -17,7 +17,6 @@ var DEFAULT_CORRECT_SELECTION = {'1': true, '2': false};
 */
 var answers, type, correctSelection;
 
-
 var deleteAnswer = function(answerID) {
     var deleteIndex = null;
     var i = 0;
@@ -29,6 +28,28 @@ var deleteAnswer = function(answerID) {
         ++i;
     }
     delete correctSelection[answerID];
+};
+
+var removeMissingAnswersFromCriteria = function() {
+    // Just as a precaution, delete any items
+    // from correctSelection which are not in answers
+    var id;
+    var missingIDs = [];
+    var answerObject = {};
+    var i;
+
+    for (i = 0; i < answers.length; ++i) {
+        answerObject[answers[i]] = answers[i];
+    }
+    for (id in correctSelection) {
+        if (!answerObject.hasOwnProperty(id)) {
+            missingIDs.push(id);
+        }
+    }
+    for (i = 0; i < missingIDs.length; ++i) {
+        delete correctSelection[missingIDs[i]];
+        ++i;
+    }
 };
 
 var addAnswer = function(answerText, isCorrect) {
@@ -54,6 +75,7 @@ var saveAnswers = function(callback) {
 };
 
 var saveCriteria = function(callback) {
+    removeMissingAnswersFromCriteria();
     OL.criteria.replace(correctSelection, function() {
         callback();
     });
@@ -124,7 +146,7 @@ var buildAnswers = function($container) {
                 .click(function() {
                     deleteAnswer($(this).data('item-id'));
                     buildAnswers($container);
-                    saveAnswers();
+                    save();
                 })
             ;
 
@@ -235,7 +257,8 @@ OL(function() {
 
     // load the correct selection (criteria data)
     OL.criteria.retrieve(function(result) {
-        correctSelection = result.data || DEFAULT_CORRECT_SELECTION;
+        OL.log(result);
+        correctSelection = result.criteria || DEFAULT_CORRECT_SELECTION;
         // build the answers as HTML elements
         buildAnswers($container);
 

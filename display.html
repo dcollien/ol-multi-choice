@@ -21,6 +21,7 @@
          .content {
             text-align: left;
             margin-top: 8px;
+            margin-left: 8px;
          }
 
          .saving {
@@ -43,11 +44,13 @@
     </head>
     <body>
         <div>
-            <div class="content" id="content">
-            </div>
-            <div></div>
             <div class="correct correct-message"></div>
             <div class="incorrect incorrect-message"></div>
+
+            <div class="content" id="content"></div>
+        </div>
+        <div>
+            <button class="btn btn-primary status" id="check-answer-btn">Check</button>
         </div>
 
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
